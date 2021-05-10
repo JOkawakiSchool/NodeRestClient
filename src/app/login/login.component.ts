@@ -15,6 +15,8 @@ export interface IUser {
 })
 export class LoginComponent implements OnInit {
   user: IUser = { email: null, password: null };
+  currentUser = {};
+  loggedIn = false;
   constructor(
     private router: Router,
     private toastService: ToastService,
@@ -23,7 +25,16 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    const token = localStorage.getItem('id_token');
+    console.log('from login ngOnit token: ', token);
+    if (token != null) {
+      this.loggedIn = true;
+      this.router.navigate(['']);
+      // console.log('hiya!');
+    } else {
+      this.loggedIn = false;
+    }
+    // this.loggedIn = localStorage.getItem('id_token') !== null || false;
   }
 
   async login(user: IUser) {
@@ -32,9 +43,9 @@ export class LoginComponent implements OnInit {
     //   email: 'wayw4rd@mail.fresnostate.edu',
     //   password: 'abc123'
     // };
-    console.log('from login user: ', user);
+    //console.log('from login user: ', user);
     const resp: any = await this.http.post('user/login', user);
-    console.log('resp from login() ', resp);
+    //console.log('resp from login() ', resp);
     if (resp && resp.token) {
       localStorage.setItem('id_token', resp.token);
       this.toastService.showToast('success', 3000, 'Login Success.');
